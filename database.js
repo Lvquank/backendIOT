@@ -70,14 +70,37 @@ if (existing.cnt === 0) {
     'INSERT INTO vehicles (user_id, plate_number) VALUES (?, ?)'
   );
   insertVehicle.run(u1.lastInsertRowid, '51A-12345');
-  insertVehicle.run(u1.lastInsertRowid, '99E122268');
   insertVehicle.run(u2.lastInsertRowid, '59B-67890');
   insertVehicle.run(u2.lastInsertRowid, '30C-11111');
-  insertVehicle.run(u2.lastInsertRowid, '51F97022');
   insertVehicle.run(u3.lastInsertRowid, '43D-99999');
+  insertVehicle.run(u1.lastInsertRowid, '99E122268');
+  insertVehicle.run(u2.lastInsertRowid, '51F97022');
 
   console.log('[DB] Seed data created');
 }
+
+function normalizePlate(value) {
+  return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+function ensureVehicle(username, plateNumber) {
+  const user = db.prepare('SELECT id FROM users WHERE username = ?').get(username);
+  if (!user) return;
+
+  const vehicles = db.prepare('SELECT plate_number FROM vehicles WHERE user_id = ?').all(user.id);
+  const exists = vehicles.some(v => normalizePlate(v.plate_number) === normalizePlate(plateNumber));
+  if (exists) return;
+
+  db.prepare('INSERT INTO vehicles (user_id, plate_number) VALUES (?, ?)').run(user.id, plateNumber);
+  console.log(`[DB] Added vehicle ${plateNumber} for ${username}`);
+}
+
+ensureVehicle('admin', '51A-12345');
+ensureVehicle('user1', '59B-67890');
+ensureVehicle('user1', '30C-11111');
+ensureVehicle('user2', '43D-99999');
+ensureVehicle('admin', '99E122268');
+ensureVehicle('user1', '51F97022');
 
 console.log('[DB] SQLite ready:', path.join(dataDir, 'parking.db'));
 

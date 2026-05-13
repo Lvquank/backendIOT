@@ -1,0 +1,21 @@
+# Webcam Biển Số Xe — Dependencies
+# Cài đặt tất cả:
+#   pip install -r requirements.txt
+
+# === BẮT BUỘC ===
+ultralytics>=8.0.0        # YOLOv8 detect khung biển số
+opencv-python>=4.8.0      # Webcam + xử lý ảnh
+requests>=2.31.0          # Gửi HTTP đến Node.js backend
+numpy>=1.24.0             # Ma trận ảnh
+
+# === TÙY CHỌN — OCR ===
+# Chọn 1 trong 2 bên dưới (EasyOCR tốt hơn nhưng cần MSVC trên Windows):
+
+# Cách 1 — EasyOCR (khuyên dùng, cần Visual C++ Build Tools):
+#   pip install easyocr
+# easyocr>=1.7.0
+
+# Cách 2 — Tesseract (tải installer): 
+#   https://github.com/UB-Mannheim/tesseract/wiki
+#   pip install pytesseract
+# pytesseract>=0.3.10
